@@ -1,0 +1,73 @@
+{
+  "name": "next-pwa-turbo",
+  "version": "0.1.0",
+  "description": "Turbopack-native PWA library for Next.js 16",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    }
+  },
+  "bin": {
+    "next-pwa-turbo": "./bin/postbuild.js"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "workbox-precaching": "^7.0.0",
+    "workbox-routing": "^7.0.0",
+    "workbox-strategies": "^7.0.0",
+    "workbox-expiration": "^7.0.0",
+    "zod": "^3.23.0",
+    "esbuild": "^0.24.0",
+    "globby": "^14.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.0.0"
+  },
+  "peerDependencies": {
+    "next": "^16.0.0",
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": false
+    },
+    "react": {
+      "optional": false
+    }
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "next.js",
+    "pwa",
+    "turbopack",
+    "service-worker",
+    "workbox",
+    "progressive-web-app"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rifampin/next-pwa-turbo"
+  }
+}
