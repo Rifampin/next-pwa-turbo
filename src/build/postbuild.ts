@@ -258,6 +258,13 @@ export async function runPostbuild(projectDir: string): Promise<PostbuildResult>
     return { success: true, swPath: null, manifestEntries: 0, warnings, errors };
   }
 
+  // Check if in development mode and devOptions is not enabled
+  const isProduction = process.env['NODE_ENV'] === 'production';
+  if (!isProduction && !config.devOptions?.enabled) {
+    logger.info('Skipping postbuild in development mode (set devOptions.enabled: true to enable)');
+    return { success: true, swPath: null, manifestEntries: 0, warnings, errors };
+  }
+
   // Load precache manifest
   const manifest = await loadPrecacheManifest(resolvedProjectDir);
   if (!manifest) {

@@ -742,3 +742,20 @@ export function useRegisterSW(
 
 export { UpdatePrompt } from "./components/UpdatePrompt.js";
 export type { UpdatePromptProps } from "./components/UpdatePrompt.js";
+
+// Push notifications
+export { usePushNotifications } from "./push-notifications.js";
+export type {
+  PushNotificationOptions,
+  PushPermission,
+  PushNotificationState,
+  PushNotificationActions,
+} from "./push-notifications.js";
+
+// Background sync
+export { useBackgroundSync } from "./background-sync.js";
+export type {
+  SyncRegistration,
+  BackgroundSyncState,
+  BackgroundSyncActions,
+} from "./background-sync.js";

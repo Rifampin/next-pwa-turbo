@@ -50,6 +50,29 @@ declare const __PWA_FALLBACKS__: {
   video?: string;
 } | null;
 
+/**
+ * Push notification configuration
+ */
+declare const __PWA_PUSH_CONFIG__: {
+  /** Whether push notifications are enabled */
+  enabled: boolean;
+  /** Default notification options */
+  defaultOptions?: {
+    badge?: string;
+    icon?: string;
+    vibrate?: number[];
+    requireInteraction?: boolean;
+  };
+} | null;
+
+/**
+ * Background sync configuration
+ */
+declare const __PWA_SYNC_CONFIG__: {
+  /** Whether background sync is enabled */
+  enabled: boolean;
+} | null;
+
 // Type the service worker global scope
 declare const self: ServiceWorkerGlobalScope;
 
@@ -272,6 +295,154 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   console.log('[next-pwa] Service worker activated', event);
+});
+
+// ---------------------------------------------------------------------------
+// Push Notifications
+// ---------------------------------------------------------------------------
+
+if (__PWA_PUSH_CONFIG__?.enabled) {
+  const pushConfig = __PWA_PUSH_CONFIG__;
+
+  /**
+   * Handle incoming push notifications
+   */
+  self.addEventListener('push', (event) => {
+    console.log('[next-pwa] Push notification received', event);
+
+    if (!event.data) {
+      console.log('[next-pwa] Push event has no data');
+      return;
+    }
+
+    // Try to parse push data as JSON
+    let data: {
+      title?: string;
+      body?: string;
+      icon?: string;
+      badge?: string;
+      tag?: string;
+      data?: unknown;
+      actions?: Array<{ action: string; title: string; icon?: string }>;
+      vibrate?: number[];
+      requireInteraction?: boolean;
+    };
+
+    try {
+      data = event.data.json();
+    } catch {
+      // If not JSON, treat as plain text
+      data = {
+        title: 'Notification',
+        body: event.data.text(),
+      };
+    }
+
+    // Build notification options
+    const options: NotificationOptions = {
+      body: data.body || '',
+      icon: data.icon || pushConfig.defaultOptions?.icon,
+      badge: data.badge || pushConfig.defaultOptions?.badge,
+      tag: data.tag,
+      data: data.data,
+      actions: data.actions,
+      vibrate: data.vibrate || pushConfig.defaultOptions?.vibrate,
+      requireInteraction: data.requireInteraction ?? pushConfig.defaultOptions?.requireInteraction,
+    };
+
+    const title = data.title || 'Notification';
+
+    event.waitUntil(self.registration.showNotification(title, options));
+  });
+
+  /**
+   * Handle notification click events
+   */
+  self.addEventListener('notificationclick', (event) => {
+    console.log('[next-pwa] Notification clicked', event);
+
+    event.notification.close();
+
+    // Handle action clicks
+    if (event.action) {
+      console.log('[next-pwa] Notification action clicked:', event.action);
+      // Custom action handling can be added here
+      // The notification data can contain URLs for different actions
+    }
+
+    // Get the URL to open (from notification data or default to app scope)
+    const urlToOpen =
+      (event.notification.data as { url?: string })?.url || __PWA_SCOPE__ || '/';
+
+    event.waitUntil(
+      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+        // Check if there's already a window/tab open with our URL
+        for (const client of clientList) {
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
+        }
+
+        // If no window is open, open a new one
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(urlToOpen);
+        }
+      })
+    );
+  });
+
+  /**
+   * Handle notification close events
+   */
+  self.addEventListener('notificationclose', (event) => {
+    console.log('[next-pwa] Notification closed', event);
+    // Analytics or cleanup can be performed here
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Background Sync
+// ---------------------------------------------------------------------------
+
+if (__PWA_SYNC_CONFIG__?.enabled) {
+  /**
+   * Handle background sync events
+   *
+   * When a sync event fires, the app should process any queued operations.
+   * The sync tag identifies which type of sync to perform.
+   */
+  self.addEventListener('sync', (event) => {
+    console.log('[next-pwa] Background sync event:', event.tag);
+
+    // Notify all clients about the sync event
+    // Clients can listen for messages and handle the sync appropriately
+    event.waitUntil(
+      self.clients.matchAll({ type: 'window' }).then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({
+            type: 'BACKGROUND_SYNC',
+            tag: event.tag,
+          });
+        });
+      })
+    );
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Message Handling
+// ---------------------------------------------------------------------------
+
+/**
+ * Handle messages from the main thread
+ */
+self.addEventListener('message', (event) => {
+  console.log('[next-pwa] Message received:', event.data);
+
+  // Handle skip waiting message
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Export empty object to satisfy TypeScript module requirements

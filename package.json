@@ -13,6 +13,10 @@
     "./react": {
       "types": "./dist/react/index.d.ts",
       "import": "./dist/react/index.js"
+    },
+    "./manifest": {
+      "types": "./dist/manifest/index.d.ts",
+      "import": "./dist/manifest/index.js"
     }
   },
   "bin": {
