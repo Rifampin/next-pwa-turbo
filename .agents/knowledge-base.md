@@ -4,6 +4,11 @@ Accumulated learnings from orchestrated sessions.
 
 ## Gotchas
 
+### Zod 4 Migration
+- `z.function().args().returns()` is removed - use `z.custom<FunctionType>()` for function validation
+- `z.SafeParseReturnType` is removed - use `ReturnType<typeof schema.safeParse>` or infer
+- Function schemas in Zod 4 are "function factories" for creating validated functions, not schema validators
+
 ### TypeScript Strict Mode
 - `exactOptionalPropertyTypes: true` requires conditional property assignment, not `prop: value || undefined`
 - `noPropertyAccessFromIndexSignature: true` requires bracket notation for env vars: `process.env['NODE_ENV']`
@@ -54,3 +59,4 @@ interface BuildAdapter {
 | Session | Date | Feature | Outcome |
 |---------|------|---------|---------|
 | 1 | 2026-01-19 | Phase 1 Foundation | COMPLETED - All 7 tasks done, tsc builds |
+| 2 | 2026-01-19 | Production Ready | COMPLETED - Migrated to pnpm, Zod 4 compat, 291 tests, docs |

@@ -253,24 +253,21 @@ const ManifestEntrySchema = z.union([
 ]);
 
 /**
- * Manifest transform function type
+ * Manifest transform function type (Zod 4 compatible)
+ *
+ * Since Zod 4's z.function() is a function factory for implementing validated
+ * functions rather than a schema validator, we use z.custom() to validate
+ * that the value is a function with the expected signature.
  */
-const ManifestTransformSchema = z.function().args(
-  z.array(ManifestEntrySchema),
-  z.unknown() // compilation context
-).returns(
-  z.union([
-    z.object({
-      manifest: z.array(ManifestEntrySchema),
-      warnings: z.array(z.string()).optional(),
-    }),
-    z.promise(
-      z.object({
-        manifest: z.array(ManifestEntrySchema),
-        warnings: z.array(z.string()).optional(),
-      })
-    ),
-  ])
+const ManifestTransformSchema = z.custom<
+  (
+    manifest: z.infer<typeof ManifestEntrySchema>[],
+    context: unknown
+  ) => { manifest: z.infer<typeof ManifestEntrySchema>[]; warnings?: string[] } |
+         Promise<{ manifest: z.infer<typeof ManifestEntrySchema>[]; warnings?: string[] }>
+>(
+  (val) => typeof val === "function",
+  { message: "manifestTransform must be a function" }
 );
 
 // =============================================================================
@@ -596,7 +593,7 @@ export function validateConfig(config: unknown): PWAConfig {
  * }
  * ```
  */
-export function safeValidateConfig(config: unknown): z.SafeParseReturnType<unknown, PWAConfig> {
+export function safeValidateConfig(config: unknown) {
   return PWAConfigSchema.safeParse(config);
 }
 

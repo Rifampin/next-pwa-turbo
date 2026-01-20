@@ -28,19 +28,21 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "workbox-precaching": "^7.0.0",
-    "workbox-routing": "^7.0.0",
-    "workbox-strategies": "^7.0.0",
-    "workbox-expiration": "^7.0.0",
-    "zod": "^3.23.0",
-    "esbuild": "^0.24.0",
-    "globby": "^14.0.0"
+    "esbuild": "^0.27.2",
+    "globby": "^16.1.0",
+    "workbox-expiration": "^7.4.0",
+    "workbox-precaching": "^7.4.0",
+    "workbox-routing": "^7.4.0",
+    "workbox-strategies": "^7.4.0",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
-    "typescript": "^5.6.0",
-    "vitest": "^2.1.0",
-    "@types/node": "^22.0.0",
-    "@types/react": "^18.0.0"
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^25.0.9",
+    "@types/react": "^19.2.8",
+    "jsdom": "^27.4.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
   },
   "peerDependencies": {
     "next": "^16.0.0",

@@ -1,0 +1,28 @@
+# Source files (dist is published)
+src/
+templates/
+
+# Tests
+*.test.ts
+vitest.config.ts
+test-app/
+
+# Development
+.agents/
+tmp/
+.git/
+.gitignore
+.npmrc
+
+# TypeScript source maps (optional, remove if you want them)
+# *.map
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
