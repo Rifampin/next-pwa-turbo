@@ -1,6 +1,8 @@
 {
-  "workflow_active": false,
-  "workflow_type": null,
-  "workflow_started": null,
-  "workflow_timeout": null
+  "schema_version": 2,
+  "orchestrator_cycles": 0,
+  "cycle_limit_reached": false,
+  "orchestrator_sessions": [],
+  "created_at": "2026-02-08T22:07:17.212210",
+  "last_updated": "2026-02-08T22:07:17.212237"
 }
